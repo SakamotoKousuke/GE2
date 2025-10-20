@@ -694,7 +694,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	Log(ConvertString(std::format(L"WSTRING{}\n", L"abc")));
 
-
+	assert(false && "assertのテストだよ\n");
 
 	WNDCLASS wc{};
 	//ウィンドウプロシージャ

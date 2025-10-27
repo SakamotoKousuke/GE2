@@ -16,13 +16,14 @@
 #include <fstream>
 #include <sstream>
 
+
 #include "externals/imgui/imgui.h"
 #include "externals/imgui/imgui_impl_dx12.h"
 #include "externals/imgui/imgui_impl_win32.h"
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 #include "externals/DirectXTex/DirectXTex.h"
-
+//
 struct Vector4 {
 	float x;
 	float y;
@@ -690,7 +691,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	CoInitializeEx(0, COINIT_MULTITHREADED);
 
-
+	
 
 	Log(ConvertString(std::format(L"WSTRING{}\n", L"abc")));
 

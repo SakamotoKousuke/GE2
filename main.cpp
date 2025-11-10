@@ -29,6 +29,8 @@
 #include "externals/imgui/imgui.h"
 #include "externals/imgui/imgui_impl_dx12.h"
 #include "externals/imgui/imgui_impl_win32.h"
+#include <array>
+
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 #include "externals/DirectXTex/DirectXTex.h"
@@ -624,6 +626,43 @@ void UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mip
 		);
 		assert(SUCCEEDED(hr));
 	}
+}
+
+// DirectInput用ポインタ（初期化済みとする）
+LPDIRECTINPUTDEVICE8 keyboard = nullptr;
+
+// 現在と前フレームのキー状態を保持
+std::array<BYTE, 256> key = {};
+std::array<BYTE, 256> prevKey = {};
+
+// キー入力更新処理（毎フレーム呼ぶ）
+void UpdateKeyboard() {
+	// 前フレームの状態を保存
+	prevKey = key;
+
+	// 今フレームの状態を取得
+	keyboard->Acquire();
+	keyboard->GetDeviceState(sizeof(key), key.data());
+}
+
+// ------------------------------
+// トリガー判定関数
+// ------------------------------
+
+bool IsPress(uint8_t keyNumber) {
+	return key[keyNumber] & 0x80;   // 押している
+}
+
+bool IsRelease(uint8_t keyNumber) {
+	return !(key[keyNumber] & 0x80); // 離している
+}
+
+bool IsTrigger(uint8_t keyNumber) {
+	return (key[keyNumber] & 0x80) && !(prevKey[keyNumber] & 0x80); // 押した瞬間
+}
+
+bool IsTriggerOff(uint8_t keyNumber) {
+	return !(key[keyNumber] & 0x80) && (prevKey[keyNumber] & 0x80); // 離した瞬間
 }
 
 //ウィンドウプロシージャ
@@ -1463,8 +1502,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		} else {
 			//グラフィックス
 
+			
 			//キーボード情報の取得開始
 			keyboard->Acquire();
+
+			UpdateKeyboard(); // 入力更新
+
+			if (IsTrigger(DIK_0)) {
+				OutputDebugStringA("0キーを押した瞬間！\n");
+			}
+			if (IsTriggerOff(DIK_0)) {
+				OutputDebugStringA("0キーを離した瞬間！\n");
+			}
+
 			BYTE key[256] = {};
 			keyboard->GetDeviceState(sizeof(key), key);
 

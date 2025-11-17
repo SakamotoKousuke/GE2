@@ -211,6 +211,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="WinApp.cpp" />
     <CLInclude Include="BC.h" />
     <ClCompile Include="BC.cpp" />
     <ClCompile Include="BC4BC5.cpp" />
